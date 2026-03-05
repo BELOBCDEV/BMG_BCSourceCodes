@@ -1,0 +1,51 @@
+{
+  "id": "8c882619-a1e5-4ad9-9927-a2ab9f295f64",
+  "name": "BMG_UTILITY",
+  "publisher": "BELO MEDICAL GROUP",
+  "version": "1.0.0.32",
+  "brief": "",
+  "description": "",
+  "privacyStatement": "",
+  "EULA": "",
+  "help": "",
+  "url": "",
+  "logo": "",
+  "dependencies": [
+    {
+      "id": "5ecfc871-5d82-43f1-9c54-59685e82318d",
+      "name": "LS Central",
+      "version": "26.1.0.976",
+      "publisher": "LS Retail"
+    },
+    {
+      "id": "abc622d1-0d07-40e3-9518-9a9adc77322a",
+      "name": "Philippine Localization",
+      "version": "2.1.1.0",
+      "publisher": "PASI"
+    },
+    {
+      "id": "0f73a245-56b6-48c6-bab2-83013987c544",
+      "name": "Belo Medical Group Bookings",
+      "version": "1.0.1.4",
+      "publisher": "Performance Advantage Systems International, Inc."
+    }
+  ],
+  "screenshots": [],
+  "platform": "1.0.0.0",
+  "application": "26.5.0.0",
+  "idRanges": [
+    {
+      "from": 50100,
+      "to": 80000
+    }
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": true,
+    "allowDownloadingSource": false,
+    "includeSourceInSymbolFile": true
+  },
+  "runtime": "15.2",
+  "features": [
+    "NoImplicitWith"
+  ]
+}
