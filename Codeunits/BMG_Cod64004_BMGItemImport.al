@@ -20,7 +20,7 @@ codeunit 64004 BMGItemImport
             until recItem.Next() = 0;
 
         if intRecCtr > 0 then
-            Message('%1 has been inserted.');
+            Message('%1 has been inserted.', intRecCtr);
     end;
 
     var
