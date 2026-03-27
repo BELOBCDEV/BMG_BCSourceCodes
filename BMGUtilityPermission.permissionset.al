@@ -9,5 +9,8 @@ permissionset 64000 BMGUtilityPermission
         codeunit BMGUpdateUserSetup = X,
         codeunit BMGUpdateSCMUsers = X,
         report BMGItemRegister = X,
-        codeunit BMGItemImport = X;
+        codeunit BMGItemImport = X,
+        codeunit BMGPopulateCustPriceGroup = X,
+        codeunit BMGReopenPO_EventSubs = X,
+        codeunit BMGUserCanUpdateItemRecord = X;
 }
