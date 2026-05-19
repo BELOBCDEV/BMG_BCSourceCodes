@@ -32,6 +32,10 @@ tableextension 64000 BMGUserSetupExt extends "User Setup"
             DataClassification = CustomerContent;
             TableRelation = Location.Code;
         }
+        field(64004; "Location Filter"; Text[250])
+        {
+            DataClassification = CustomerContent;
+        }
     }
 
     keys

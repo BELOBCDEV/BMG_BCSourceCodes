@@ -23,6 +23,10 @@ pageextension 64010 BMGUserSetupExt extends "User Setup"
             {
                 ApplicationArea = All;
             }
+            field("Location Filter"; Rec."Location Filter")
+            {
+                ApplicationArea = All;
+            }
         }
     }
 

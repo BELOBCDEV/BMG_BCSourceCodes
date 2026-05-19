@@ -7,6 +7,10 @@ tableextension 64002 BMGSalesSetupExt extends "Sales & Receivables Setup"
         {
             DataClassification = CustomerContent;
         }
+        field(64001; "Enable User Access"; Boolean)
+        {
+            DataClassification = CustomerContent;
+        }
     }
 
     keys

@@ -11,6 +11,11 @@ pageextension 64023 BMGSalesSetupExt extends "Sales & Receivables Setup"
                 ApplicationArea = All;
                 Visible = true;
             }
+            field("Enable User Access"; Rec."Enable User Access")
+            {
+                ApplicationArea = All;
+                Visible = true;
+            }
         }
     }
 

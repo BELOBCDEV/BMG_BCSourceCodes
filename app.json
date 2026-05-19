@@ -2,7 +2,7 @@
   "id": "8c882619-a1e5-4ad9-9927-a2ab9f295f64",
   "name": "BMG_UTILITY",
   "publisher": "BELO MEDICAL GROUP",
-  "version": "1.0.0.41",
+  "version": "1.0.0.60",
   "brief": "",
   "description": "",
   "privacyStatement": "",
@@ -28,6 +28,18 @@
       "name": "Belo Medical Group Bookings",
       "version": "1.0.1.4",
       "publisher": "Performance Advantage Systems International, Inc."
+    },
+    {
+      "id": "51fedfd5-214a-42dd-a1ff-8bc4a73abd0f",
+      "name": "Belo Customizations",
+      "version": "1.1.1.40",
+      "publisher": "Performance Advantage Systems International, Inc."
+    },
+    {
+      "id": "25a9851d-b839-4163-8fd2-f7e922d0339d",
+      "name": "Request Document System",
+      "version": "1.0.2.0",
+      "publisher": "PASI"
     }
   ],
   "screenshots": [],
@@ -44,7 +56,7 @@
     "allowDownloadingSource": false,
     "includeSourceInSymbolFile": true
   },
-  "runtime": "15.2",
+  "runtime": "16.0",
   "features": [
     "NoImplicitWith"
   ]

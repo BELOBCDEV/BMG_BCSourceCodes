@@ -12,6 +12,14 @@ pageextension 64022 BMGSalesInvSubformExt extends "Sales Invoice Subform"
                 Visible = bolShowCustPriceColumn;
             }
         }
+        modify("Shortcut Dimension 1 Code")
+        {
+            Editable = bolEditable;
+        }
+        modify("Shortcut Dimension 2 Code")
+        {
+            Editable = bolEditable;
+        }
     }
 
     actions
@@ -27,10 +35,12 @@ pageextension 64022 BMGSalesInvSubformExt extends "Sales Invoice Subform"
     begin
         recSalesSetup.Get();
         bolShowCustPriceColumn := recSalesSetup."Show Cust. Price Grp. in SO/SI";
+        bolEditable := not recSalesSetup."Enable User Access";
     end;
 
     var
         recSalesSetup: Record "Sales & Receivables Setup";
+        bolEditable: Boolean;
         bolShowCustPriceColumn: Boolean;
 
 }

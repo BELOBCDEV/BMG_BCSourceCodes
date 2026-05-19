@@ -12,5 +12,12 @@ permissionset 64000 BMGUtilityPermission
         codeunit BMGItemImport = X,
         codeunit BMGPopulateCustPriceGroup = X,
         codeunit BMGReopenPO_EventSubs = X,
-        codeunit BMGUserCanUpdateItemRecord = X;
+        codeunit BMGUserCanUpdateItemRecord = X,
+        tabledata BMGBankLedgEntryExt = RIMD,
+        table BMGBankLedgEntryExt = X,
+        codeunit BMGTransferOrderMgt = X,
+        page BMGBankAccLedgerEntries2Ext = X,
+        codeunit BMGBankAccLedgEntryUpdate = X,
+        codeunit BMGCleanupIntSynchErrors = X,
+        codeunit BMGSendEmailIfJQFails = X;
 }
