@@ -12,7 +12,8 @@ codeunit 64011 BMGSendEmailIfJQFails
         if xRec.Status = xRec.Status::Error then
             exit;
 
-        if Rec."Object Caption to Run" = 'Adjust Cost - Item Entries' then
+        if (Rec."Object Caption to Run" = 'Adjust Cost - Item Entries') OR
+           (Rec."Object Caption to Run" = 'BMGPostBulkOpenStatement') then
             SendFailureEmail(Rec);
 
     end;
@@ -26,7 +27,7 @@ codeunit 64011 BMGSendEmailIfJQFails
     begin
         UserSetup.Reset();
         //UserSetup.SetRange("Approval Administrator", true);
-        UserSetup.SetRange("User ID", 'RMARQUEZ');
+        UserSetup.SetFilter("User ID", '%1|%2|%3', 'RMARQUEZ', 'JSALVADOR', 'FA');
 
         if UserSetup.FindSet() then
             repeat

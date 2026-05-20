@@ -79,6 +79,7 @@ codeunit 64008 BMGTransferOrderMgt
     local procedure "Sales-Post_OnBeforeReleaseSalesDoc"(var SalesHeader: Record "Sales Header")
     var
         recSalesLine: Record "Sales Line";
+        recItem: Record Item;
     begin
         recSalesSetup.Get();
         if recSalesSetup."Enable User Access" then begin
@@ -89,7 +90,23 @@ codeunit 64008 BMGTransferOrderMgt
             recSalesLine.SetRange("Location Code", '');
 
             if recSalesLine.FindFirst() then
-                Error('Location Code is required for line no. = %1.', recSalesLine."Line No.");
+                repeat
+                    if recSalesLine.Type = recSalesLine.Type::Item then begin
+                        if recItem.Get(recSalesLine."No.") then
+                            if recItem.Type = recItem.Type::Inventory then
+                                Error('Location Code is required for Line No. = %1.', recSalesLine."Line No.");
+                        if recSalesLine."Shortcut Dimension 1 Code" = '' then
+                            Error('Branches Code must not be blank.');
+                        if recSalesLine."Shortcut Dimension 2 Code" = '' then
+                            Error('Department Code must not be blank.');
+                    end;
+                    if (recSalesLine.Type = recSalesLine.Type::"G/L Account") OR (recSalesLine.Type = recSalesLine.Type::"Fixed Asset") then begin
+                        if recSalesLine."Shortcut Dimension 1 Code" = '' then
+                            Error('Branches Code must not be blank.');
+                        if recSalesLine."Shortcut Dimension 2 Code" = '' then
+                            Error('Department Code must not be blank.');
+                    end;
+                until recSalesLine.Next() = 0;
         end;
     end;
 
@@ -108,17 +125,23 @@ codeunit 64008 BMGTransferOrderMgt
 
             if recPurchLine.FindFirst() then
                 repeat
-                    if recItem.Get(recPurchLine."No.") then begin
-                        if recItem.Type in [recItem.Type::Inventory, recItem.Type::Service] then begin
-                            if recPurchLine."Location Code" = '' then
-                                Error('Location Code is required for Line No. = %1.', recPurchLine."Line No.");
-                        end;
-                        if recItem.Type = recItem.Type::Inventory then begin
+                    if recPurchLine.Type = recPurchLine.Type::Item then begin
+                        if recItem.Get(recPurchLine."No.") then begin
+                            if recItem.Type = recItem.Type::Inventory then begin
+                                if recPurchLine."Location Code" = '' then
+                                    Error('Location Code is required for Line No. = %1.', recPurchLine."Line No.");
+                            end;
                             if recPurchLine."Shortcut Dimension 1 Code" = '' then
                                 Error('Branch Code is required for Line No. = %1.', recPurchLine."Line No.");
                             if recPurchLine."Shortcut Dimension 2 Code" = '' then
                                 Error('Department Code is required for Line No. = %1.', recPurchLine."Line No.");
                         end;
+                    end;
+                    if (recPurchLine.Type = recPurchLine.Type::"G/L Account") OR (recPurchLine.Type = recPurchLine.Type::"Fixed Asset") then begin
+                        if recPurchLine."Shortcut Dimension 1 Code" = '' then
+                            Error('Branch Code is required for Line No. = %1.', recPurchLine."Line No.");
+                        if recPurchLine."Shortcut Dimension 2 Code" = '' then
+                            Error('Department Code is required for Line No. = %1.', recPurchLine."Line No.");
                     end;
                 until recPurchLine.Next() = 0;
         end;
