@@ -1,11 +1,189 @@
 codeunit 64000 "BMG Utility"
 {
 
+    Permissions = tabledata 32 = RIMD,
+                  tabledata "Vendor Ledger Entry" = RIMD,
+                  tabledata "Detailed Vendor Ledg. Entry" = RIMD,
+                  tabledata "Bank Account Ledger Entry" = RIMD,
+                  tabledata "VAT Entry" = RIMD,
+                  tabledata "Value Entry" = RIMD,
+                  tabledata WHT_Entry_PHL = RIMD,
+                  tabledata "Purch. Inv. Header" = RIMD,
+                  tabledata "Purch. Inv. Line" = RIMD,
+                  tabledata "G/L Entry" = RIMD;
+
     trigger OnRun()
     var
         PurchHeader: Record "Purchase Header";
         PurchLine: Record "Purchase Line";
+        GLEntry: Record "G/L Entry";
+        VendorLedgEntry: Record "Vendor Ledger Entry";
+        DtldVendLedgEntry: Record "Detailed Vendor Ledg. Entry";
+        BankAccLedgEntry: Record "Bank Account Ledger Entry";
+        VATEntry: Record "VAT Entry";
+        ValueEntry: Record "Value Entry";
+        WHTEntry: Record WHT_Entry_PHL;
+        PurchInvHeader: Record "Purch. Inv. Header";
+        PurchInvLine: Record "Purch. Inv. Line";
+        ItemLedgEntry: Record "Item Ledger Entry";
+        VendorCode: Code[20];
+        NewVendorCode: Code[20];
+        intCtr: array[10] of Integer;
+        PostingDate: Date;
     begin
+
+        //wrong use of posting date - raised by DJ
+        PostingDate := 20260728D;
+
+        ItemLedgEntry.Reset();
+        ItemLedgEntry.SetRange("Posting Date", PostingDate);
+
+        intCtr[1] := 0;
+        if ItemLedgEntry.FindFirst() then
+            repeat
+                ItemLedgEntry."Posting Date" := 20260528D;
+                ItemLedgEntry.Modify();
+                intCtr[1] += 1;
+            until ItemLedgEntry.Next() = 0;
+
+        ValueEntry.Reset();
+        ValueEntry.SetRange("Posting Date", PostingDate);
+
+        intCtr[2] := 0;
+        if ValueEntry.FindFirst() then
+            repeat
+                ValueEntry."Posting Date" := 20260528D;
+                ValueEntry.Modify();
+                intCtr[2] += 1;
+            until ValueEntry.Next() = 0;
+
+        GLEntry.Reset();
+        GLEntry.SetRange("Posting Date", PostingDate);
+
+        intCtr[3] := 0;
+
+        if GLEntry.FindFirst() then
+            repeat
+                GLEntry."Posting Date" := 20260528D;
+                GLEntry.Modify();
+                intCtr[3] += 1;
+            until GLEntry.Next() = 0;
+
+        Message('Modified record count is: ILE %1\Value Entry', intCtr[1], intCtr[2], intCtr[3]);
+
+        /* //for Vendor merging
+        VendorCode := 'TR000273';
+        NewVendorCode := 'TR000148';
+
+        GLEntry.Reset();
+        GLEntry.SetRange("Bal. Account Type", GLEntry."Bal. Account Type"::Vendor);
+        GLEntry.SetRange("Bal. Account No.", VendorCode);
+
+        if GLEntry.FindSet() then
+            repeat
+                GLEntry."Bal. Account No." := NewVendorCode;
+                GLEntry.Modify();
+                intCtr[1] += 1;
+            until GLEntry.Next() = 0;
+
+        VendorLedgEntry.Reset();
+        VendorLedgEntry.SetRange("Vendor No.", VendorCode);
+        if VendorLedgEntry.FindSet() then
+            repeat
+                VendorLedgEntry."Vendor No." := NewVendorCode;
+                VendorLedgEntry.Modify();
+                intCtr[2] += 1;
+            //VendorLedgEntry.ModifyAll("Vendor No.", NewVendorCode);
+            until VendorLedgEntry.Next() = 0;
+
+        DtldVendLedgEntry.Reset();
+        DtldVendLedgEntry.SetRange("Vendor No.", VendorCode);
+
+        if DtldVendLedgEntry.FindSet() then
+            repeat
+                DtldVendLedgEntry."Vendor No." := NewVendorCode;
+                DtldVendLedgEntry.Modify();
+                intCtr[3] += 1;
+            until DtldVendLedgEntry.Next() = 0;
+
+        BankAccLedgEntry.Reset();
+        BankAccLedgEntry.SetRange("Bal. Account Type", BankAccLedgEntry."Bal. Account Type"::Vendor);
+        BankAccLedgEntry.SetRange("Bal. Account No.", VendorCode);
+
+        if BankAccLedgEntry.FindSet() then
+            repeat
+                BankAccLedgEntry."Bal. Account No." := NewVendorCode;
+                BankAccLedgEntry.Modify();
+                intCtr[4] += 1;
+            until BankAccLedgEntry.Next() = 0;
+
+        VATEntry.Reset();
+        VATEntry.SetRange("Bill-to/Pay-to No.", VendorCode);
+
+        if VATEntry.FindSet() then
+            repeat
+                VATEntry."Bill-to/Pay-to No." := NewVendorCode;
+                VATEntry.Modify();
+                intCtr[5] += 1;
+            until VATEntry.Next() = 0;
+
+        ValueEntry.Reset();
+        ValueEntry.SetRange("Source Type", ValueEntry."Source Type"::Vendor);
+        ValueEntry.SetRange("Source No.", VendorCode);
+
+        if ValueEntry.FindSet() then
+            repeat
+                ValueEntry."Source No." := NewVendorCode;
+                ValueEntry.Modify();
+                intCtr[6] += 1;
+            until ValueEntry.Next() = 0;
+
+        WHTEntry.Reset();
+        WHTEntry.SetRange("Bill-to/Pay-to No.", VendorCode);
+        if WHTEntry.FindSet() then
+            repeat
+                WHTEntry."Bill-to/Pay-to No." := NewVendorCode;
+                WHTEntry.Modify();
+                intCtr[7] += 1;
+            until WHTEntry.Next() = 0;
+
+        PurchInvHeader.Reset();
+        PurchInvHeader.SetRange("Buy-from Vendor No.", VendorCode);
+        if PurchInvHeader.FindSet() then
+            repeat
+                PurchInvHeader."Buy-from Vendor No." := NewVendorCode;
+                PurchInvHeader."Pay-to Vendor No." := NewVendorCode;
+                PurchInvHeader.Modify();
+                intCtr[8] += 1;
+            until PurchInvHeader.Next() = 0;
+
+
+        PurchInvLine.Reset();
+        PurchInvLine.SetRange("Buy-from Vendor No.", VendorCode);
+        if PurchInvLine.FindSet() then
+            repeat
+                PurchInvLine."Buy-from Vendor No." := NewVendorCode;
+                PurchInvLine."Pay-to Vendor No." := NewVendorCode;
+                PurchInvLine.Modify();
+                intCtr[9] += 1;
+            until PurchInvLine.Next() = 0;
+
+        Message('GL Entry: %1 modified records\' +
+                'Vend Ledger Entry: %2 modified records\' +
+                'Dtld Vend Ledg Entry: %3 modified records\' +
+                'Bank Ledg Entry: %4 modified records\' +
+                'VAT Entry: %5 modified records\' +
+                'Value Entry: %6 modified records\' +
+                'WHT Entry: %7 modified records\' +
+                'Purch Inv Header: %8 modified records\' +
+                'Purch Inv Line: %9 modified records.',
+                intCtr[1], intCtr[2], intCtr[3], intCtr[4],
+                intCtr[5], intCtr[6], intCtr[7], intCtr[8], intCtr[9]);
+        */
+
+
+
+
         //DONE
         /*
         recItem.Reset();
@@ -98,7 +276,7 @@ codeunit 64000 "BMG Utility"
 
         Message('Bank Acc Ledger Entry Ext Table update done!');
         */
-
+        /*
         PurchHeader.Reset();
         PurchHeader.SetRange("Document Type", PurchHeader."Document Type"::Order);
         PurchHeader.SetRange("No.", 'IBPO00008087');
@@ -123,8 +301,17 @@ codeunit 64000 "BMG Utility"
                     PurchLine.Modify();
                 until PurchLine.Next() = 0;
         end;
+        */
 
-        Message('PO update done');
+        /*
+        recItemLedgEntry.Reset();
+        recItemLedgEntry.SetRange("Entry No.", 5904);
+        if recItemLedgEntry.FindFirst() then begin
+            recItemLedgEntry."Lot No." := 'IBSSI-4537E-GWP';
+            recItemLedgEntry.Modify()
+        end;
+        Message('ILE update done');
+        */
 
     end;
 
@@ -143,7 +330,7 @@ codeunit 64000 "BMG Utility"
         recIntegrationSynchErrors: Record "Integration Synch. Job Errors";
         recBankAccLedgEntryExtTable: Record BMGBankLedgEntryExt;
         recBankAccLedgEntry: Record "Bank Account Ledger Entry";
-
+        recItemLedgEntry: Record "Item Ledger Entry";
 
 
 }

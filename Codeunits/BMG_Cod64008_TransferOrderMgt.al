@@ -15,8 +15,10 @@ codeunit 64008 BMGTransferOrderMgt
 
             if recUserSetup.FindFirst() then begin
                 if recUserSetup."Location Filter" <> '' then begin
-                    if STRPOS(recUserSetup."Location Filter", TransferHeader."Transfer-from Code") < 0 then
-                        Error(NotAllowedLocationLbl, TransferHeader."Transfer-from Code");
+                    if TransferHeader."Transfer-from Code" <> '' then begin
+                        if STRPOS(recUserSetup."Location Filter", TransferHeader."Transfer-from Code") <= 0 then
+                            Error(NotAllowedLocationLbl, TransferHeader."Transfer-from Code");
+                    end;
                 end;
                 if recUserSetup."Location Filter" = '' then begin
                     if recUserSetup."Location Code" <> '' then
@@ -37,8 +39,10 @@ codeunit 64008 BMGTransferOrderMgt
 
             if recUserSetup.FindFirst() then begin
                 if recUserSetup."Location Filter" <> '' then begin
-                    if STRPOS(recUserSetup."Location Filter", ItemJournalLine."Location Code") < 0 then
-                        Error(NotAllowedLocationLbl, ItemJournalLine."Location Code");
+                    if ItemJournalLine."Location Code" <> '' then begin
+                        if STRPOS(recUserSetup."Location Filter", ItemJournalLine."Location Code") <= 0 then
+                            Error(NotAllowedLocationLbl, ItemJournalLine."Location Code");
+                    end;
                 end;
                 if recUserSetup."Location Filter" = '' then begin
                     if recUserSetup."Location Code" <> '' then
@@ -49,8 +53,8 @@ codeunit 64008 BMGTransferOrderMgt
         end;
     end;
 
-    [EventSubscriber(ObjectType::Table, Database::"Sales Line", OnValidateLocationCodeOnBeforeSetShipmentDate, '', false, false)]
-    local procedure "Sales Line_OnValidateLocationCodeOnBeforeSetShipmentDate"(var SalesLine: Record "Sales Line"; var IsHandled: Boolean)
+    [EventSubscriber(ObjectType::Table, Database::"Sales Line", OnAfterValidateLocationCode, '', false, false)]
+    local procedure "Sales Line_OnAfterValidateLocationCode"(var SalesLine: Record "Sales Line"; xSalesLine: Record "Sales Line")
     var
         recUserSetup: Record "User Setup";
     begin
@@ -73,6 +77,12 @@ codeunit 64008 BMGTransferOrderMgt
                 end;
             end;
         end;
+    end;
+
+    [EventSubscriber(ObjectType::Table, Database::"Sales Line", OnValidateLocationCodeOnBeforeSetShipmentDate, '', false, false)]
+    local procedure "Sales Line_OnValidateLocationCodeOnBeforeSetShipmentDate"(var SalesLine: Record "Sales Line"; var IsHandled: Boolean)
+    begin
+
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Sales-Post", OnBeforeReleaseSalesDoc, '', false, false)]
@@ -187,6 +197,26 @@ codeunit 64008 BMGTransferOrderMgt
                             Error('Department Code must not be blank!');
             end;
         end;
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Shpfy Order Events", OnAfterCreateSalesHeader, '', false, false)]
+    local procedure OnAfterCreateSalesHeader(OrderHeader: Record "Shpfy Order Header"; var SalesHeader: Record "Sales Header")
+    begin
+        //Message('Shopify Order No. is %1', OrderHeader."Shopify Order No.");
+        //Message('Sales Order No. is %1', SalesHeader."No.");
+
+        if StrPos(OrderHeader."Shopify Order No.", '#') <> 0 then
+            SalesHeader."External Document No." := DelChr(OrderHeader."Shopify Order No.", '=', '#')
+        else
+            SalesHeader."External Document No." := OrderHeader."Shopify Order No.";
+
+        if SalesHeader."External Document No." = '' then begin
+            if StrPos(SalesHeader."Shpfy Order No.", '#') <> 0 then
+                SalesHeader."External Document No." := DelChr(SalesHeader."Shpfy Order No.", '=', '#')
+            else
+                SalesHeader."External Document No." := SalesHeader."Shpfy Order No.";
+        end;
+        SalesHeader.Modify();
     end;
 
     var

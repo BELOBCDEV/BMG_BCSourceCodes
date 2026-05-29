@@ -19,5 +19,10 @@ permissionset 64000 BMGUtilityPermission
         page BMGBankAccLedgerEntries2Ext = X,
         codeunit BMGBankAccLedgEntryUpdate = X,
         codeunit BMGCleanupIntSynchErrors = X,
-        codeunit BMGSendEmailIfJQFails = X;
+        codeunit BMGSendEmailIfJQFails = X,
+        report BMGGeneralJournalUnposted = X,
+        report BMGPaymentJournalUnposted = X,
+        codeunit BMGPostShippedSalesOrder = X,
+        codeunit BMGMemberPointEntryExpDateMgt = X,
+        codeunit BMGProcessShopifyOrdersSubs = X;
 }

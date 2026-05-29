@@ -10,6 +10,11 @@ tableextension 64002 BMGSalesSetupExt extends "Sales & Receivables Setup"
         field(64001; "Enable User Access"; Boolean)
         {
             DataClassification = CustomerContent;
+            Caption = 'Enable Location User Access';
+        }
+        field(64002; "Enable Member Expiration"; Boolean)
+        {
+            DataClassification = CustomerContent;
         }
     }
 
