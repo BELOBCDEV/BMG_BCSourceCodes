@@ -2,7 +2,7 @@
   "id": "8c882619-a1e5-4ad9-9927-a2ab9f295f64",
   "name": "BMG_UTILITY",
   "publisher": "BELO MEDICAL GROUP",
-  "version": "1.0.0.63",
+  "version": "1.0.0.72",
   "brief": "",
   "description": "",
   "privacyStatement": "",
@@ -32,7 +32,7 @@
     {
       "id": "51fedfd5-214a-42dd-a1ff-8bc4a73abd0f",
       "name": "Belo Customizations",
-      "version": "1.1.1.40",
+      "version": "1.1.1.36",
       "publisher": "Performance Advantage Systems International, Inc."
     },
     {
@@ -40,6 +40,12 @@
       "name": "Request Document System",
       "version": "1.0.2.0",
       "publisher": "PASI"
+    },
+    {
+      "id": "ec255f57-31d0-4ca2-b751-f2fa7c745abb",
+      "name": "Shopify Connector",
+      "version": "27.2.42879.45093",
+      "publisher": "Microsoft"
     }
   ],
   "screenshots": [],

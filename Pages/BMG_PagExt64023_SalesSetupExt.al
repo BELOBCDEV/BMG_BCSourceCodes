@@ -16,6 +16,11 @@ pageextension 64023 BMGSalesSetupExt extends "Sales & Receivables Setup"
                 ApplicationArea = All;
                 Visible = true;
             }
+            field("Enable Member Expiration"; Rec."Enable Member Expiration")
+            {
+                ApplicationArea = All;
+                Visible = true;
+            }
         }
     }
 

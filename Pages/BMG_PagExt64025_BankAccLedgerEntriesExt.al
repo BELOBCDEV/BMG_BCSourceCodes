@@ -31,7 +31,7 @@ pageextension 64025 BMGBankAccLedgerEntriesExt extends "Bank Account Ledger Entr
                 Caption = 'Update Bank Acc. Ledg. Entry Ext Table';
                 ApplicationArea = All;
                 Image = Refresh;
-                Visible = false; //05092026 RSM permanent
+                Visible = true;
                 trigger OnAction()
                 var
                     CalcRunningAccBalance: Codeunit "Calc. Running Acc. Balance";
@@ -64,6 +64,11 @@ pageextension 64025 BMGBankAccLedgerEntriesExt extends "Bank Account Ledger Entr
                             recBankLedgEntryExt."Debit Amount" := recBankLedgEntry."Debit Amount";
                             recBankLedgEntryExt."Credit Amount" := recBankLedgEntry."Credit Amount";
                             recBankLedgEntryExt.Amount := recBankLedgEntry.Amount;
+                            recBankLedgEntryExt."Debit Amount (LCY)" := recBankLedgEntry."Debit Amount (LCY)";
+                            recBankLedgEntryExt."Credit Amount (LCY)" := recBankLedgEntry."Credit Amount (LCY)";
+                            recBankLedgEntryExt."Amount (LCY)" := recBankLedgEntry."Amount (LCY)";
+                            recBankLedgEntryExt.Description := recBankLedgEntry.Description;
+                            recBankLedgEntryExt.Particulars := recBankLedgEntry.BELOParticulars;
                             recBankLedgEntryExt.Insert();
                         //end else begin
                         /*    myInt2 += 1;
