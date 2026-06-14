@@ -1,0 +1,19 @@
+#!/bin/sh
+# commit-msg hook — delegates to PowerShell on Windows
+# Requires PowerShell 5.1+ (ships with Windows 10/11)
+# Place this file at .githooks/commit-msg and run:
+#   git config core.hooksPath .githooks
+
+COMMIT_MSG_FILE="$1"
+
+# Detect Windows (Git for Windows provides MINGW/MSYS environment)
+if [ -n "$WINDIR" ] || [ -n "$windir" ]; then
+  powershell.exe -NoProfile -ExecutionPolicy Bypass \
+    -File "$(git rev-parse --show-toplevel)/.githooks/append-ai-usage.ps1" \
+    -CommitMsgFile "$COMMIT_MSG_FILE"
+  exit $?
+else
+  # Non-Windows fallback (bash) — kept minimal for portability
+  echo "Non-Windows detected. Run append-ai-usage.ps1 manually or use bash equivalent."
+  exit 0
+fi

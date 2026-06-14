@@ -1,0 +1,26 @@
+# CODEOWNERS
+# GitHub auto-requests review from the owner of each changed path.
+# Later matches take precedence, so the catch-all is first and the
+# tooling/governance overrides follow.
+#
+# Split rationale:
+#   - Application code        -> owners  (approval authority)
+#   - Tooling & governance    -> devops  (they maintain the machinery;
+#                                          protects the tracking system
+#                                          from silent changes)
+#
+# Team membership (by design — authorship is separate from approval):
+#   - devops: belomed, ccaagbay, SLW-Crux
+#   - owners: belomed, SLW-Crux   (ccaagbay is NOT an approver)
+# ccaagbay commits application code but cannot approve it; their app-code
+# PRs are approved by belomed or SLW-Crux. As the team grows, add reviewers
+# to the relevant team — no edits needed here.
+
+# Default owner for everything (application code)
+*                            @Belo-Medical-Group/owners
+
+# Tooling & governance — owned by devops
+/.github/                    @Belo-Medical-Group/devops
+/.githooks/                  @Belo-Medical-Group/devops
+/governance/                 @Belo-Medical-Group/devops
+/setup-dev-environment.ps1   @Belo-Medical-Group/devops
