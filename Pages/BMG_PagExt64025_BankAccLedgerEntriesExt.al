@@ -88,6 +88,41 @@ pageextension 64025 BMGBankAccLedgerEntriesExt extends "Bank Account Ledger Entr
                     Message('%1 records have been inserted.\%2 records have been modified.', myInt, myInt2);
                 end;
             }
+            action(UpdateRunningBalance)
+            {
+                Caption = 'Update Running Balances';
+                ApplicationArea = All;
+                Image = UpdateDescription;
+                Visible = true;
+                trigger OnAction()
+                var
+                    CalcRunningAccBalance: Codeunit "Calc. Running Acc. Balance";
+                    recBankLedgEntryExt: Record BMGBankLedgEntryExt;
+                    recBankLedgEntryExt2: Record BMGBankLedgEntryExt;
+                    recBankLedgEntry: Record "Bank Account Ledger Entry";
+                    datRefDate: Date;
+                begin
+                    recBankLedgEntryExt.Reset();
+
+                    myInt := 0;
+                    if recBankLedgEntryExt.FindFirst() then
+                        repeat
+                            recBankLedgEntry.Reset();
+                            recBankLedgEntry.SetRange("Entry No.", recBankLedgEntryExt."Entry No.");
+
+                            if recBankLedgEntry.FindFirst() then begin
+                                recBankLedgEntryExt."Running Balance" := CalcRunningAccBalance.GetBankAccBalance(recBankLedgEntry);
+                                recBankLedgEntryExt."Running Balance (LCY)" := CalcRunningAccBalance.GetBankAccBalanceLCY(recBankLedgEntry);
+                                recBankLedgEntryExt.Modify();
+                                myInt += 1;
+                            end;
+
+
+                        until recBankLedgEntryExt.Next() = 0;
+
+                    Message('%1 records have been updated.');
+                end;
+            }
         }
     }
     trigger OnAfterGetRecord()

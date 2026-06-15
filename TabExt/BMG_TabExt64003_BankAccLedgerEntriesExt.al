@@ -1,6 +1,7 @@
 tableextension 64003 BMGBankAccLedgerEntriesExt extends "Bank Account Ledger Entry"
 {
     AllowInCustomizations = AsReadWrite;
+
     fields
     {
         // Add changes to table fields here

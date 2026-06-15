@@ -30,8 +30,65 @@ codeunit 64000 "BMG Utility"
         NewVendorCode: Code[20];
         intCtr: array[10] of Integer;
         PostingDate: Date;
+        SalesPrice: Record "Sales Price";
+        MemberPointEntry: Record "LSC Member Point Entry";
+        MPEntryNo: Integer;
+        MPCounter: Integer;
     begin
+        /*
+        //06122026
+        MemberPointEntry.Reset();
+        MemberPointEntry.SetRange("Entry Type", MemberPointEntry."Entry Type"::Expire);
 
+        Message('Record count is %1', MemberPointEntry.Count);
+
+        MemberPointEntry.Reset();
+        MemberPointEntry.SetRange("Account No.", '0000D7FC3');
+        MemberPointEntry.SetRange("Entry Type", MemberPointEntry."Entry Type"::Expire);
+
+        if MemberPointEntry.FindFirst() then
+            MemberPointEntry.Delete();
+        */
+        //0005-001-178
+
+        MemberPointEntry.Reset();
+        MemberPointEntry.SetRange("Account No.", '0005-001-178');
+        MemberPointEntry.SetRange("Entry Type", MemberPointEntry."Entry Type"::Expire);
+
+        if MemberPointEntry.FindFirst() then begin
+            MPEntryNo := MemberPointEntry."Entry No.";
+            MemberPointEntry.Delete();
+        end;
+
+        MemberPointEntry.Reset();
+        MemberPointEntry.SetRange("Account No.", '0005-001-178');
+        MemberPointEntry.SetFilter("Entry Type", '<>%1', MemberPointEntry."Entry Type"::Expire);
+        MemberPointEntry.SetRange("Closed by Entry", MPEntryNo);
+
+        MPCounter := 0;
+
+        if MemberPointEntry.FindFirst() then
+            repeat
+                MemberPointEntry."Closed by Points" := 0;
+                MemberPointEntry."Closed by Entry" := 0;
+                MemberPointEntry.Modify();
+                MPCounter += 1;
+            until MemberPointEntry.Next() = 0;
+
+        Message('%1 records updated', MPCounter);
+
+        /*
+        SalesPrice.Reset();
+        SalesPrice.SetRange("Sales Code", 'PDS');
+
+        if SalesPrice.FindSet() then
+            SalesPrice.DeleteAll();
+
+        Message('Sales Price Deletion Done!');
+        */
+
+
+        /*
         //wrong use of posting date - raised by DJ
         PostingDate := 20260728D;
 
@@ -70,6 +127,7 @@ codeunit 64000 "BMG Utility"
             until GLEntry.Next() = 0;
 
         Message('Modified record count is: ILE %1\Value Entry', intCtr[1], intCtr[2], intCtr[3]);
+        */
 
         /* //for Vendor merging
         VendorCode := 'TR000273';

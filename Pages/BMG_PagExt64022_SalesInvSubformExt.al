@@ -10,6 +10,13 @@ pageextension 64022 BMGSalesInvSubformExt extends "Sales Invoice Subform"
                 Caption = 'Customer Price Group';
                 ApplicationArea = All;
                 Visible = bolShowCustPriceColumn;
+
+                trigger OnValidate()
+                begin
+                    Rec.UpdateUnitPriceByField(42);
+                end;
+
+
             }
         }
         modify("Shortcut Dimension 1 Code")

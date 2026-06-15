@@ -15,6 +15,7 @@ codeunit 64012 BMGPostShippedSalesOrder
     begin
         SalesHeader.SetRange("Document Type", SalesHeader."Document Type"::Order);
         SalesHeader.SetRange(Status, SalesHeader.Status::Released);
+        SalesHeader.SetFilter("Shpfy Order No.", '<>%1', '');
 
         if not SalesHeader.FindSet() then begin
             Message('No released Sales Orders found.');
