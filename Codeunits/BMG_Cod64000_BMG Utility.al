@@ -34,7 +34,45 @@ codeunit 64000 "BMG Utility"
         MemberPointEntry: Record "LSC Member Point Entry";
         MPEntryNo: Integer;
         MPCounter: Integer;
+        LSCStatement: Record "LSC Statement";
+        ItemCategory: Record "Item Category";
     begin
+
+        ItemCategory.Reset();
+        ItemCategory.SetFilter(Code, '%1|%2|%3|%4|%5|%6',
+        'FORSALE', 'SVC:PHYSICIAN', 'SVC:AESTHETICIAN',
+        'SVC:SRG_V', 'SVC:OTHERS', 'SVC:SURGICAL');
+
+        if ItemCategory.FindFirst() then
+            repeat
+                case ItemCategory.Code of
+                    'FORSALE':
+                        ItemCategory."LSC Division Code" := 'PRODUCT';
+                    'SVC:PHYSICIAN':
+                        ItemCategory."LSC Division Code" := 'MD';
+                    'SVC:AESTHETICIAN':
+                        ItemCategory."LSC Division Code" := 'AES';
+                    'SVC:SRG_V':
+                        ItemCategory."LSC Division Code" := 'SUR-V';
+                    'SVC:OTHERS':
+                        ItemCategory."LSC Division Code" := 'SUR-OTH';
+                    'SVC:SURGICAL':
+                        ItemCategory."LSC Division Code" := 'SUR-VMG';
+                end;
+                ItemCategory.Modify();
+            until ItemCategory.Next() = 0;
+
+
+        //06182026
+        /*
+        LSCStatement.Reset();
+        LSCStatement.SetRange("No.", 'SB140000000249');
+
+        if LSCStatement.FindFirst() then
+            LSCStatement.Delete();
+
+        Message('Done');
+        */
         /*
         //06122026
         MemberPointEntry.Reset();
@@ -50,7 +88,7 @@ codeunit 64000 "BMG Utility"
             MemberPointEntry.Delete();
         */
         //0005-001-178
-
+        /*
         MemberPointEntry.Reset();
         MemberPointEntry.SetRange("Account No.", '0005-001-178');
         MemberPointEntry.SetRange("Entry Type", MemberPointEntry."Entry Type"::Expire);
@@ -76,6 +114,7 @@ codeunit 64000 "BMG Utility"
             until MemberPointEntry.Next() = 0;
 
         Message('%1 records updated', MPCounter);
+        */
 
         /*
         SalesPrice.Reset();
