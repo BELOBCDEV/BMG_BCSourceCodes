@@ -120,6 +120,30 @@ Make a change, stage it, commit. Check the result:
 
 You should see AI-Usage trailers at the bottom of the commit message.
 
+### 4. macOS / Linux developers
+
+The hook is cross-platform — it runs the same tracking logic under PowerShell 7
+(`pwsh`) on macOS/Linux as it does under Windows PowerShell on Windows.
+
+1. **Install PowerShell 7** (once per machine):
+
+       brew install powershell        # macOS (Homebrew)
+       # Linux: see https://learn.microsoft.com/powershell/scripting/install/
+
+   Without `pwsh`, commits still succeed — they're just not tracked (the hook
+   prints a one-line notice and exits cleanly).
+
+2. **Configure the hooks path.** `setup-dev-environment.ps1` needs PowerShell,
+   so if you haven't installed `pwsh` yet, run the shell helper instead:
+
+       ./setup-dev-environment.sh      # or simply: git config core.hooksPath .githooks
+
+3. **No chmod needed** — `commit-msg` is committed with the executable bit set,
+   which git on macOS/Linux requires (a non-executable hook is silently skipped).
+
+4. **Verify** exactly as in step 3 above. A commit made *after running Claude in
+   that repo* should show `AI-Usage: yes` with real counts.
+
 ---
 
 ## CI enforcement (recommended)

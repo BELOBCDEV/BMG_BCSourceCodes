@@ -19,8 +19,14 @@ Two things must be true for a commit to count:
    ```
 2. **Run setup** once in that clone (wires the hook + execution policy):
    ```powershell
-   .\setup-dev-environment.ps1
+   .\setup-dev-environment.ps1      # Windows
    ```
+   **macOS / Linux:** install PowerShell first (`brew install powershell`),
+   then run the shell helper:
+   ```sh
+   ./setup-dev-environment.sh       # or: git config core.hooksPath .githooks
+   ```
+   (No `pwsh` installed? Commits still work — they're just not tracked.)
 3. **Edit** in your IDE / editor.
 4. **Commit locally:**
    ```

@@ -1,7 +1,13 @@
-# append-ai-usage.ps1
+# append-ai-usage.ps1  (CROSS-PLATFORM: Windows PowerShell 5.1 + macOS/Linux pwsh 7+)
 # Reads Claude Code JSONL session logs since the last git commit.
 # Auto-detects mechanism categories from tool names + file extensions.
 # Optionally accepts a developer note at commit time (single prompt, skippable).
+#
+# Portability: the ONLY OS-specific bits are the Claude log location and how the
+# project path is encoded into the log folder name — both branch on $IsUnixHost
+# below. Everything else (git, JSON parsing, trailer writing) is identical on
+# all platforms. On macOS/Linux this runs under `pwsh`; the commit-msg shim
+# picks pwsh vs powershell.exe automatically.
 #
 # Trailers written to every commit (example):
 #
@@ -69,7 +75,20 @@ $ErrorActionPreference = "SilentlyContinue"
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 
-$ClaudeLogRoot = Join-Path $env:USERPROFILE ".claude\projects"
+# Cross-platform OS detection. $PSVersionTable.Platform is 'Unix' on macOS/Linux
+# under PowerShell (Core) 6+, and is absent ($null) on Windows PowerShell 5.1 —
+# so this is true on Mac/Linux and false on Windows, on every PowerShell edition.
+$IsUnixHost = ($PSVersionTable.Platform -eq 'Unix')
+
+# Claude Code stores session logs under the user profile. The folder name and
+# path separator differ by OS:
+#   Windows : %USERPROFILE%\.claude\projects
+#   macOS   : $HOME/.claude/projects
+$ClaudeLogRoot = if ($IsUnixHost) {
+    Join-Path $env:HOME ".claude/projects"
+} else {
+    Join-Path $env:USERPROFILE ".claude\projects"
+}
 
 # All five reliable auto-detected categories
 # Key = trailer suffix   Value = detection rules (evaluated in order)
@@ -118,8 +137,18 @@ function Get-ProjectLogFolder {
     $repoRoot = git rev-parse --show-toplevel 2>$null
     if (-not $repoRoot) { return $null }
 
-    # Claude encodes path: backslashes and colons become hyphens
-    $encoded = $repoRoot -replace '\\', '/' -replace '^/', '' -replace '[/:]', '-'
+    # Claude encodes the project's absolute path into the log folder name by
+    # replacing path-structure characters with hyphens. The exact rule differs
+    # by OS, matching how Claude Code itself names the folder:
+    #   Windows: C:\Users\me\repo        -> C--Users-me-repo
+    #            (\ -> /, then / and : -> -)
+    #   macOS  : /Users/me/My Project    -> -Users-me-My-Project
+    #            (leading / kept as leading -, and / . : and SPACE all -> -)
+    if ($IsUnixHost) {
+        $encoded = $repoRoot -replace '[/ .:]', '-'
+    } else {
+        $encoded = $repoRoot -replace '\\', '/' -replace '^/', '' -replace '[/:]', '-'
+    }
 
     $candidate = Join-Path $ClaudeLogRoot $encoded
     if (Test-Path $candidate) { return $candidate }

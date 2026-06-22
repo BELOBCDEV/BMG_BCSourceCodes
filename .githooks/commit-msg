@@ -1,52 +1,40 @@
 #!/bin/sh
 # ============================================================================
-# commit-msg — git hook entry point for AI usage tracking
+# commit-msg — git hook entry point for AI usage tracking (CROSS-PLATFORM)
 # ============================================================================
 #
-# WHERE THIS SITS IN THE SYSTEM
-#   git commit
-#      └─> .githooks/commit-msg   (THIS FILE — runs on every commit)
-#             └─> .githooks/append-ai-usage.ps1   (does the real work)
-#                    └─> appends AI-Usage / Lines-* / Tests-* trailers to the
-#                        commit message, which the weekly Org AI Usage Report
-#                        later parses out of the git history.
+# Same job as the Windows-only shim, but runs the PowerShell tracking script on
+# whichever platform the developer is on:
+#   Windows : powershell.exe  (Windows PowerShell 5.1, built in)
+#   macOS   : pwsh            (PowerShell 7+, install via: brew install powershell)
+#   Linux   : pwsh            (PowerShell 7+)
 #
-# WHY A SHELL SHIM CALLS POWERSHELL
-#   git invokes hooks through /bin/sh (even on Windows, via Git-for-Windows'
-#   bundled MSYS shell). The detection logic is written in PowerShell because
-#   developer machines are Windows and PowerShell can read Claude Code's JSONL
-#   session logs easily. So this thin sh script just detects the OS and hands
-#   off to the .ps1.
+# If the right PowerShell isn't found, the commit still proceeds (exit 0) — the
+# hook is best-effort and must never block a commit. The CI trailer check is the
+# real enforcement.
 #
-# ACTIVATION
-#   The hook only runs if the clone points git at this folder:
-#       git config core.hooksPath .githooks
-#   That is exactly what setup-dev-environment.ps1 does — which is why a clone
-#   that never ran setup produces NO trailers (commits show as
-#   "local-untracked" in the report).
-#
-# Requires PowerShell 5.1+ (ships with Windows 10/11 — no install needed).
+# Activation (per clone):  git config core.hooksPath .githooks
 # ============================================================================
 
-# git passes the path to the temp file holding the commit message as $1.
 COMMIT_MSG_FILE="$1"
+SCRIPT="$(git rev-parse --show-toplevel)/.githooks/append-ai-usage.ps1"
 
-# Detect Windows. Git for Windows sets WINDIR/windir in the hook environment;
-# macOS/Linux do not. This is how we avoid running powershell.exe off-Windows.
 if [ -n "$WINDIR" ] || [ -n "$windir" ]; then
-  # -NoProfile      : don't load the user's PS profile (faster, predictable)
-  # -ExecutionPolicy Bypass : run the script even if the machine policy is strict
-  # The .ps1 lives at the repo root's .githooks/ — resolve it via git so the
-  # hook works regardless of the current working directory.
+  # ── Windows ── built-in Windows PowerShell
   powershell.exe -NoProfile -ExecutionPolicy Bypass \
-    -File "$(git rev-parse --show-toplevel)/.githooks/append-ai-usage.ps1" \
-    -CommitMsgFile "$COMMIT_MSG_FILE"
+    -File "$SCRIPT" -CommitMsgFile "$COMMIT_MSG_FILE"
+  exit $?
+elif command -v pwsh >/dev/null 2>&1; then
+  # ── macOS / Linux ── PowerShell 7+ (stable)
+  pwsh -NoProfile -File "$SCRIPT" -CommitMsgFile "$COMMIT_MSG_FILE"
+  exit $?
+elif command -v pwsh-preview >/dev/null 2>&1; then
+  # ── macOS / Linux ── PowerShell 7 preview build
+  pwsh-preview -NoProfile -File "$SCRIPT" -CommitMsgFile "$COMMIT_MSG_FILE"
   exit $?
 else
-  # Non-Windows fallback. The tracking script is Windows-only by design, so on
-  # macOS/Linux we do nothing and let the commit proceed. NOTE: this means a
-  # commit made on a Mac carries no trailers — expected, since all developers
-  # are on Windows. (Exit 0 = allow the commit.)
-  echo "Non-Windows detected. Run append-ai-usage.ps1 manually or use bash equivalent."
+  # PowerShell not available on this non-Windows machine. Don't block the
+  # commit; just tell the developer how to enable tracking.
+  echo "ai-usage hook: pwsh not found — install with 'brew install powershell' to enable AI usage tracking on macOS. (commit allowed)"
   exit 0
 fi
