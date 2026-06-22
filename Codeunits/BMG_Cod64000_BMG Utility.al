@@ -36,8 +36,39 @@ codeunit 64000 "BMG Utility"
         MPCounter: Integer;
         LSCStatement: Record "LSC Statement";
         ItemCategory: Record "Item Category";
+        LSCTransSalesEntry: Record "LSC Trans. Sales Entry";
+        LSCTransStatus: Record "LSC Transaction Status";
     begin
 
+        LSCTransSalesEntry.Reset();
+        LSCTransSalesEntry.SetRange(Date, 20260621D);
+        LSCTransSalesEntry.SetRange("Store No.", 'B013');
+        LSCTransSalesEntry.SetRange("Item No.", '005-1104-0003829');
+
+        if LSCTransSalesEntry.FindFirst() then
+            repeat
+                //first update
+                LSCTransSalesEntry."Lot No." := 'N-0226-A5002';
+                LSCTransSalesEntry.Modify();
+
+            until LSCTransSalesEntry.Next() = 0;
+        Message('Update Done.');
+
+        LSCTransSalesEntry.Reset();
+        LSCTransSalesEntry.SetRange(Date, 20260621D);
+        LSCTransSalesEntry.SetRange("Store No.", 'B013');
+        LSCTransSalesEntry.SetRange("Item No.", '005-2304-0000434');
+
+        if LSCTransSalesEntry.FindFirst() then
+            repeat
+                //2nd update
+                LSCTransSalesEntry."Lot No." := 'N-Q1025-5710013';
+                LSCTransSalesEntry.Modify();
+
+            until LSCTransSalesEntry.Next() = 0;
+
+        //Item Hierarchy
+        /*
         ItemCategory.Reset();
         ItemCategory.SetFilter(Code, '%1|%2|%3|%4|%5|%6',
         'FORSALE', 'SVC:PHYSICIAN', 'SVC:AESTHETICIAN',
@@ -61,7 +92,7 @@ codeunit 64000 "BMG Utility"
                 end;
                 ItemCategory.Modify();
             until ItemCategory.Next() = 0;
-
+        */
 
         //06182026
         /*
