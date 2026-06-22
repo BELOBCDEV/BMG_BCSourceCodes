@@ -28,12 +28,42 @@
 # code metrics above are still recorded on every commit.
 #
 # Trailer names are fixed-width and grep-friendly for GitHub Actions parsing.
+#
+# ───────────────────────────────────────────────────────────────────────────────
+# SYSTEM ARCHITECTURE — how this script fits the wider tracking system
+#
+#   [developer machine]                         [GitHub]
+#   git commit                                  org-ai-usage-report.yml (weekly)
+#     └─ .githooks/commit-msg (sh shim)           └─ reads commit messages via API
+#          └─ THIS SCRIPT                             └─ parses the trailers below
+#               ├─ reads Claude Code JSONL logs          └─ aggregates per developer
+#               │   (~/.claude/projects/<repo>)              + per repo into one issue
+#               └─ reads git's staged diff
+#                    └─ writes AI-* / Lines-* / Tests-* trailers onto the commit
+#
+#   The script is the ONLY place AI activity is measured. Everything downstream
+#   (the weekly report, the process-compliance view) just parses the trailers
+#   this script writes. If a commit bypasses this script (web-UI commit, no
+#   setup, or --no-verify), it carries no trailers and is counted as
+#   "untracked" by the report.
+#
+# EXECUTION FLOW BELOW, IN ORDER:
+#   1. Constants     — tool→category map, file-type patterns, comment markers
+#   2. Helpers       — locate the Claude log folder, classify a tool, read summaries
+#   3. Code metrics  — parse `git diff --cached` for line counts, docs, tests
+#   4. Log scan      — walk JSONL sessions since the last commit, tally tool use
+#   5. Optional note — one skippable prompt, shown only when AI activity is found
+#   6. Build trailers— append the AI-*/Lines-*/Tests-* block to the commit message
+# ───────────────────────────────────────────────────────────────────────────────
 
 param(
     [Parameter(Mandatory=$true)]
-    [string]$CommitMsgFile
+    [string]$CommitMsgFile      # path to the temp commit-message file, passed by git
 )
 
+# StrictMode Off + SilentlyContinue: the hook must NEVER block a commit on its
+# own error. If anything in here fails, the commit should still go through —
+# tracking is best-effort, not a gate. (The CI check is the real enforcement.)
 Set-StrictMode -Off
 $ErrorActionPreference = "SilentlyContinue"
 
