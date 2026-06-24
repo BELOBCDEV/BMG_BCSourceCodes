@@ -39,7 +39,15 @@ codeunit 64000 "BMG Utility"
         LSCTransSalesEntry: Record "LSC Trans. Sales Entry";
         LSCTransStatus: Record "LSC Transaction Status";
     begin
+        SalesPrice.Reset();
+        SalesPrice.SetRange("Sales Code", 'B016');
 
+        if SalesPrice.FindSet() then
+            SalesPrice.DeleteAll();
+
+        Message('Sales Price Deletion Done!');
+        //06222026
+        /*
         LSCTransSalesEntry.Reset();
         LSCTransSalesEntry.SetRange(Date, 20260621D);
         LSCTransSalesEntry.SetRange("Store No.", 'B013');
@@ -66,6 +74,7 @@ codeunit 64000 "BMG Utility"
                 LSCTransSalesEntry.Modify();
 
             until LSCTransSalesEntry.Next() = 0;
+        */
 
         //Item Hierarchy
         /*

@@ -24,5 +24,10 @@ permissionset 64000 BMGUtilityPermission
         report BMGPaymentJournalUnposted = X,
         codeunit BMGPostShippedSalesOrder = X,
         codeunit BMGMemberPointEntryExpDateMgt = X,
-        codeunit BMGProcessShopifyOrdersSubs = X;
+        codeunit BMGProcessShopifyOrdersSubs = X,
+        tabledata BMGVendorMasterEntryCount = RIMD,
+        table BMGVendorMasterEntryCount = X,
+        report BMGMemberAccountPointsInfo = X,
+        report BMGMemberPointEntry = X,
+        page BMGVendorMasterEntryCount = X;
 }
