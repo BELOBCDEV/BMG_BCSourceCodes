@@ -14,6 +14,19 @@ table 64001 BMGVendorMasterEntryCount
         }
         field(3; "Entry Count"; Integer)
         {
+            Caption = 'Vend. Ledger Entry Count';
+            DataClassification = CustomerContent;
+        }
+        field(4; "Purch. Order Count"; Integer)
+        {
+            DataClassification = CustomerContent;
+        }
+        field(5; "Purch. Invoice Count"; Integer)
+        {
+            DataClassification = CustomerContent;
+        }
+        field(6; "Vendor Exist"; Boolean)
+        {
             DataClassification = CustomerContent;
         }
     }

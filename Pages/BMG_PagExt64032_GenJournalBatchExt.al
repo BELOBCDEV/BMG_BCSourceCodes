@@ -16,7 +16,27 @@ pageextension 64032 BMGGenJournalBatchExt extends "General Journal Batches"
 
     actions
     {
-        // Add changes to page actions here
+        addlast(processing)
+        {
+            action(PrintGenJournalBatch)
+            {
+                ApplicationArea = All;
+                Caption = 'Gen. Journal Batch Report';
+                Image = Report;
+                Promoted = true;
+                PromotedCategory = Report;
+                PromotedIsBig = true;
+
+                trigger OnAction()
+                var
+                    GenJournalBatch: Record "Gen. Journal Batch";
+                begin
+                    GenJournalBatch.SetRange("Journal Template Name", Rec."Journal Template Name");
+                    //GenJournalBatch.SetRange(Name, Rec.Name);
+                    Report.RunModal(Report::BMGGeneralJournalBatch, true, false, GenJournalBatch);
+                end;
+            }
+        }
     }
 
     trigger OnAfterGetRecord()

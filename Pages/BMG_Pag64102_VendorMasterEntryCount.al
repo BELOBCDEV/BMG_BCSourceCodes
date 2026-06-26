@@ -25,6 +25,21 @@ page 64102 BMGVendorMasterEntryCount
                 {
                     ApplicationArea = All;
                 }
+                field("Purch. Order Count"; Rec."Purch. Order Count")
+                {
+                    ApplicationArea = All;
+                    Editable = false;
+                }
+                field("Purch. Invoice Count"; Rec."Purch. Invoice Count")
+                {
+                    ApplicationArea = All;
+                    Editable = false;
+                }
+                field("Vendor Exist"; Rec."Vendor Exist")
+                {
+                    ApplicationArea = All;
+                    Editable = false;
+                }
             }
         }
     }
@@ -43,42 +58,56 @@ page 64102 BMGVendorMasterEntryCount
                 PromotedIsBig = true;
 
                 trigger OnAction()
-                var
-                    Vendor: Record Vendor;
-                    VendorLedgerEntry: Record "Vendor Ledger Entry";
-                    EntryCount: Record BMGVendorMasterEntryCount;
                 begin
-
                     Rec.Reset();
-                    if Rec.FindFirst() then
+                    if Rec.FindSet() then
                         repeat
-                            VendorLedgerEntry.Reset();
-                            VendorLedgerEntry.SetRange("Vendor No.", Rec."Vendor No.");
-
-                            if VendorLedgerEntry.FindSet() then begin
-                                Rec."Entry Count" := VendorLedgerEntry.Count();
-                                Rec.Modify();
-                            end;
-
+                            Rec."Entry Count" := GetVendorLedgerEntryCount(Rec."Vendor No.");
+                            Rec."Purch. Order Count" := GetPurchaseOrderCount(Rec."Vendor No.");
+                            Rec."Purch. Invoice Count" := GetPurchaseInvoiceCount(Rec."Vendor No.");
+                            Rec."Vendor Exist" := CheckVendorExists(Rec."Vendor No.");
+                            Rec.Modify();
                         until Rec.Next() = 0;
-                    /*
-                    EntryCount.DeleteAll();
 
-                    if Vendor.FindSet() then
-                        repeat
-                            VendorLedgerEntry.SetRange("Vendor No.", Vendor."No.");
-
-                            EntryCount.Init();
-                            EntryCount."Vendor No." := Vendor."No.";
-                            EntryCount."Vendor Name" := Vendor.Name;
-                            EntryCount."Entry Count" := VendorLedgerEntry.Count();
-                            EntryCount.Insert();
-                        until Vendor.Next() = 0;
-                    */
                     CurrPage.Update(false);
                     Message('Entry counts updated successfully.');
                 end;
+
             }
         }
     }
+
+
+    local procedure GetPurchaseOrderCount(VendorNo: Code[20]): Integer
+    var
+        PurchaseHeader: Record "Purchase Header";
+    begin
+        PurchaseHeader.SetRange("Document Type", PurchaseHeader."Document Type"::Order);
+        PurchaseHeader.SetRange("Buy-from Vendor No.", VendorNo);
+        exit(PurchaseHeader.Count());
+    end;
+
+    local procedure GetPurchaseInvoiceCount(VendorNo: Code[20]): Integer
+    var
+        PurchaseHeader: Record "Purchase Header";
+    begin
+        PurchaseHeader.SetRange("Document Type", PurchaseHeader."Document Type"::Invoice);
+        PurchaseHeader.SetRange("Buy-from Vendor No.", VendorNo);
+        exit(PurchaseHeader.Count());
+    end;
+
+    local procedure CheckVendorExists(VendorNo: Code[20]): Boolean
+    var
+        Vendor: Record Vendor;
+    begin
+        exit(Vendor.Get(VendorNo));
+    end;
+
+    local procedure GetVendorLedgerEntryCount(VendorNo: Code[20]): Integer
+    var
+        VendorLedgerEntry: Record "Vendor Ledger Entry";
+    begin
+        VendorLedgerEntry.SetRange("Vendor No.", VendorNo);
+        exit(VendorLedgerEntry.Count());
+    end;
 }
