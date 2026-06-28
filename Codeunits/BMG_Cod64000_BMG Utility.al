@@ -39,13 +39,17 @@ codeunit 64000 "BMG Utility"
         LSCTransSalesEntry: Record "LSC Trans. Sales Entry";
         LSCTransStatus: Record "LSC Transaction Status";
     begin
-        SalesPrice.Reset();
-        SalesPrice.SetRange("Sales Code", 'B016');
+        //06282026
+        recApprovalUserSetup.Reset();
+        recApprovalUserSetup.SetFilter("User ID", '%1|%2|%3|%4', 'JSALVADOR', 'KAREN.BALTAZAR', 'VINCENT.ALCANTARA', 'FA');
 
-        if SalesPrice.FindSet() then
-            SalesPrice.DeleteAll();
+        if recApprovalUserSetup.FindFirst() then
+            repeat
+                recApprovalUserSetup."Approval Administrator" := true;
+                recApprovalUserSetup.Modify();
+            until recApprovalUserSetup.Next() = 0;
 
-        Message('Sales Price Deletion Done!');
+        Message('Approval User Setup update done!');
         //06222026
         /*
         LSCTransSalesEntry.Reset();
