@@ -1,0 +1,41 @@
+﻿#!/bin/sh
+# ============================================================================
+# commit-msg — git hook entry point for AI usage tracking (CROSS-PLATFORM)
+# ============================================================================
+#
+# Same job as the Windows-only shim, but runs the PowerShell tracking script on
+# whichever platform the developer is on:
+#   Windows : powershell.exe  (Windows PowerShell 5.1, built in)
+#   macOS   : pwsh            (PowerShell 7+, install via: brew install powershell)
+#   Linux   : pwsh            (PowerShell 7+)
+#
+# If the right PowerShell isn't found, the commit still proceeds (exit 0) — the
+# hook is best-effort and must never block a commit. The CI trailer check is the
+# real enforcement.
+#
+# Activation (per clone):  git config core.hooksPath .githooks
+# ============================================================================
+
+COMMIT_MSG_FILE="$1"
+SCRIPT="$(git rev-parse --show-toplevel)/.githooks/append-ai-usage.ps1"
+
+if [ -n "$WINDIR" ] || [ -n "$windir" ]; then
+  # ── Windows ── built-in Windows PowerShell
+  powershell.exe -NoProfile -ExecutionPolicy Bypass \
+    -File "$SCRIPT" -CommitMsgFile "$COMMIT_MSG_FILE"
+  exit $?
+elif command -v pwsh >/dev/null 2>&1; then
+  # ── macOS / Linux ── PowerShell 7+ (stable)
+  pwsh -NoProfile -File "$SCRIPT" -CommitMsgFile "$COMMIT_MSG_FILE"
+  exit $?
+elif command -v pwsh-preview >/dev/null 2>&1; then
+  # ── macOS / Linux ── PowerShell 7 preview build
+  pwsh-preview -NoProfile -File "$SCRIPT" -CommitMsgFile "$COMMIT_MSG_FILE"
+  exit $?
+else
+  # PowerShell not available on this non-Windows machine. Don't block the
+  # commit; just tell the developer how to enable tracking.
+  echo "ai-usage hook: pwsh not found — install with 'brew install powershell' to enable AI usage tracking on macOS. (commit allowed)"
+  exit 0
+fi
+
