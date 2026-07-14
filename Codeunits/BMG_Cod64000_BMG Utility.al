@@ -10,8 +10,9 @@ codeunit 64000 "BMG Utility"
                   tabledata WHT_Entry_PHL = RIMD,
                   tabledata "Purch. Inv. Header" = RIMD,
                   tabledata "Purch. Inv. Line" = RIMD,
-                  tabledata "G/L Entry" = RIMD;
-
+                  tabledata "G/L Entry" = RIMD,
+                  tabledata "Transfer Shipment Header" = RIMD,
+                  tabledata "Inventory Period" = RIMD;
     trigger OnRun()
     var
         PurchHeader: Record "Purchase Header";
@@ -38,8 +39,167 @@ codeunit 64000 "BMG Utility"
         ItemCategory: Record "Item Category";
         LSCTransSalesEntry: Record "LSC Trans. Sales Entry";
         LSCTransStatus: Record "LSC Transaction Status";
+        TransferShipmentHeader: Record "Transfer Shipment Header";
+        TransferShipmentLine: Record "Transfer Shipment Line";
+        PostedWhseShipmentHeader: Record "Posted Whse. Shipment Header";
+        PostedWhseShipmentLine: Record "Posted Whse. Shipment Line";
+        InventoryPeriod: Record "Inventory Period";
+        LSCPOSTerminal: Record "LSC POS Terminal";
+        LSCPOSTerminal2: Record "LSC POS Terminal";
+        PostedStatement: Record "LSC Posted Statement";
+        PostedStatementLine: Record "LSC Posted Statement Line";
+        intRecCtr: Integer;
+        recVendor: Record Vendor;
     begin
+        //07132026
+        recApprovalUserSetup.Reset();
+        recApprovalUserSetup.SetFilter("User ID", '%1', 'VINCENT.ALCANTARA');
+
+        if recApprovalUserSetup.FindFirst() then
+            repeat
+                recApprovalUserSetup."Approval Administrator" := true;
+                recApprovalUserSetup.Modify();
+                intRecCtr += 1;
+            until recApprovalUserSetup.Next() = 0;
+
+        Message('%1 record updated successfully!', intRecCtr);
+        /*
+        recVendor.Reset();
+        recVendor.SetRange("No.", 'NT000163');
+        intRecCtr := 0;
+        if recVendor.FindFirst() then begin
+            recVendor."IC Partner Code" := 'SASHI';
+            recVendor.Modify();
+            intRecCtr += 1;
+        end;
+        
+        Message('%1 record updated successfully.', intRecCtr);
+        */
+
+        /*
+        PostedStatementLine.Reset();
+        PostedStatementLine.SetFilter("Statement No.", '%1|%2', 'SB160000000001', 'SB160000000002');
+
+        if PostedStatementLine.FindFirst() then
+            repeat
+                PostedStatementLine.Delete();
+                intRecCtr += 1;
+            until PostedStatementLine.Next() = 0;
+        Message('%1 records deleted in Posted Statement Line', intRecCtr);
+        */
+
+        /*
+        //07102026
+        PostedStatement.Reset();
+        PostedStatement.SetRange("Store No.", 'B016');
+        intRecCtr := 0;
+        if PostedStatement.FindFirst() then
+            repeat
+                PostedStatement.Delete();
+                intRecCtr += 1;
+            until PostedStatement.Next() = 0;
+        Message('%1 records deleted in Posted Statement', intRecCtr);
+
+        LSCPOSTerminal.ChangeCompany('CENTRAL');
+        LSCPOSTerminal.Reset();
+        LSCPOSTerminal.SetFilter("No.", '%1|%2', 'B016A', 'B016B');
+        MPCounter := 0;
+        if LSCPOSTerminal.FindFirst() then
+            repeat
+                LSCPOSTerminal2.Init();
+                LSCPOSTerminal2.TransferFields(LSCPOSTerminal);
+                LSCPOSTerminal2.Insert();
+                MPCounter += 1;
+            until LSCPOSTerminal.Next() = 0;
+
+        Message('%1 records transferred.', MPCounter);
+        */
+
+        //07.03.2026
+        /*
+        GLEntry.Reset();
+        GLEntry.SetRange("Posting Date", 20270226D);
+
+        clear(intCtr);
+
+        if GLEntry.FindFirst() then
+            repeat
+                GLEntry."Posting Date" := 20260226D;
+                GLEntry.Modify();
+                intCtr[1] += 1;
+            until GLEntry.Next() = 0;
+
+        ValueEntry.Reset();
+        ValueEntry.SetRange("Posting Date", 20270226D);
+
+        if ValueEntry.FindFirst() then
+            repeat
+                ValueEntry."Posting Date" := 20260226D;
+                ValueEntry.Modify();
+                intCtr[2] += 1;
+            until ValueEntry.Next() = 0;
+
+        ItemLedgEntry.Reset();
+        ItemLedgEntry.SetRange("Posting Date", 20270226D);
+
+        if ItemLedgEntry.FindFirst() then
+            repeat
+                ItemLedgEntry."Posting Date" := 20260226D;
+                ItemLedgEntry.Modify();
+                intCtr[3] += 1;
+            until ItemLedgEntry.Next() = 0;
+
+        Message('%1 GLEntry records modified\%2 Value Entry records modified\%3 ILE records modified.', intCtr[1], intCtr[2], intCtr[3]);
+        */
+
+        /*
+        InventoryPeriod.Reset();
+        InventoryPeriod.SetRange("Ending Date", 20260430D);
+
+        if InventoryPeriod.FindFirst() then begin
+            InventoryPeriod.Closed := true;
+            InventoryPeriod.Modify();
+        end;
+        */
+
+        /*
+        TransferShipmentHeader.Reset();
+        TransferShipmentHeader.SetFilter("No.", '%1|%2', 'ITS00000001', 'ITS00000002');
+        
+        if TransferShipmentHeader.FindFirst() then repeat
+            TransferShipmentHeader."Transfer Order Date" := 20260501D;
+            TransferShipmentHeader."Posting Date" := 20260501D;
+            TransferShipmentHeader."Shipment Date" := 20260501D;
+            TransferShipmentHeader."Receipt Date" := 20260501D;
+            TransferShipmentHeader.Modify();
+        until TransferShipmentHeader.Next() = 0;
+        Message('Transfer Shipment Header update');
+        TransferShipmentLine.Reset();
+        TransferShipmentLine.SetFilter("Document No.", '%1|%2', 'ITS00000001', 'ITS00000002');
+
+        if TransferShipmentLine.findfirst() then repeat
+           TransferShipmentLine."Shipment Date" := 20260501D;
+           TransferShipmentLine.Modify();
+        until TransferShipmentLine.Next() = 0;
+        Message('Transfer Shipment Lines update');
+        */
+
+        //07.02.2026
+        /*
+        ItemLedgEntry.Reset();
+        ItemLedgEntry.SetRange("Entry No.", 104118);
+
+        if ItemLedgEntry.FindFirst() then begin
+            ItemLedgEntry."Lot No." := 'MEC061626';
+            ItemLedgEntry."Expiration Date" := 20261231D;
+            ItemLedgEntry.Modify();
+            Message('ILE update done.');
+        end;
+        */
+
+
         //06282026
+        /*
         recApprovalUserSetup.Reset();
         recApprovalUserSetup.SetFilter("User ID", '%1|%2|%3|%4', 'JSALVADOR', 'KAREN.BALTAZAR', 'VINCENT.ALCANTARA', 'FA');
 
@@ -50,6 +210,7 @@ codeunit 64000 "BMG Utility"
             until recApprovalUserSetup.Next() = 0;
 
         Message('Approval User Setup update done!');
+        */
         //06222026
         /*
         LSCTransSalesEntry.Reset();

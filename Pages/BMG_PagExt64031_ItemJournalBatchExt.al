@@ -44,7 +44,7 @@ pageextension 64031 BMGItemJournalBatchExt extends "Item Journal Batches"
                     TempExcelBuffer.AddColumn('No. of Line Records', false, '', true, false, false, '', TempExcelBuffer."Cell Type"::Text);
 
                     ItemJournalBatch.Reset();
-                    ItemJournalBatch.SetRange("Journal Template Name", 'ITEM');
+                    //ItemJournalBatch.SetRange("Journal Template Name", 'ITEM');
                     if ItemJournalBatch.FindSet() then
                         repeat
                             ItemJnlLine.Reset();

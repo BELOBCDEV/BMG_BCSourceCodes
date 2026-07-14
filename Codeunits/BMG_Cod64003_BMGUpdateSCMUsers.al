@@ -11,6 +11,7 @@ codeunit 64003 BMGUpdateSCMUsers
         if recUserSetup.FindFirst() then
             repeat
                 recUserSetup."Allow Posting From" := Today;
+                recUserSetup."Allow Posting To" := Today;
                 recUserSetup.Modify();
             until recUserSetup.Next() = 0;
 
@@ -23,6 +24,7 @@ codeunit 64003 BMGUpdateSCMUsers
         if recUserSetup.FindFirst() then
             repeat
                 recUserSetup."Allow Posting From" := Today;
+                recUserSetup."Allow Posting To" := Today;
                 recUserSetup.Modify();
             until recUserSetup.Next() = 0;
 
@@ -34,6 +36,7 @@ codeunit 64003 BMGUpdateSCMUsers
         if recUserSetup.FindFirst() then
             repeat
                 recUserSetup."Allow Posting From" := Today;
+                recUserSetup."Allow Posting To" := Today;
                 recUserSetup.Modify();
             until recUserSetup.Next() = 0;
 
@@ -45,6 +48,7 @@ codeunit 64003 BMGUpdateSCMUsers
         if recUserSetup.FindFirst() then
             repeat
                 recUserSetup."Allow Posting From" := Today;
+                recUserSetup."Allow Posting To" := Today;
                 recUserSetup.Modify();
             until recUserSetup.Next() = 0;
 
@@ -56,6 +60,7 @@ codeunit 64003 BMGUpdateSCMUsers
         if recUserSetup.FindFirst() then
             repeat
                 recUserSetup."Allow Posting From" := Today;
+                recUserSetup."Allow Posting To" := Today;
                 recUserSetup.Modify();
             until recUserSetup.Next() = 0;
     end;

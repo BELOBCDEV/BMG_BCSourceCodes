@@ -1,0 +1,4 @@
+# Ensure hook scripts always use LF so the shebang works on all platforms
+.githooks/commit-msg text eol=lf
+.githooks/*.sh        text eol=lf
+setup-dev-environment.sh text eol=lf
