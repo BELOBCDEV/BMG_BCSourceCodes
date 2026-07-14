@@ -1,4 +1,4 @@
-﻿# append-ai-usage.ps1  (CROSS-PLATFORM: Windows PowerShell 5.1 + macOS/Linux pwsh 7+)
+# append-ai-usage.ps1  (CROSS-PLATFORM: Windows PowerShell 5.1 + macOS/Linux pwsh 7+)
 # Reads Claude Code JSONL session logs since the last git commit.
 # Auto-detects mechanism categories from tool names + file extensions.
 # Optionally accepts a developer note at commit time (single prompt, skippable).
@@ -422,4 +422,3 @@ $newMsg = $commitMsg.TrimEnd() + "`n" + ($trailerLines -join "`n") + "`n"
 Set-Content -Path $CommitMsgFile -Value $newMsg -NoNewline -Encoding UTF8
 
 exit 0
-

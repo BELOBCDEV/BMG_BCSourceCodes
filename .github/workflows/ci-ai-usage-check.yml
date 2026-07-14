@@ -1,0 +1,67 @@
+# .github/workflows/ci-ai-usage-check.yml
+#
+# Enforces that every commit in a PR carries the AI-Usage trailer.
+# This is the anti-gaming control: a developer who bypasses the local
+# hook with `git commit --no-verify` will fail this check and cannot merge.
+#
+# Set this as a REQUIRED status check (via org ruleset or branch protection)
+# so it must pass before merge.
+
+name: AI Usage Trailer Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    # Skip runs for docs-only / non-code changes to save Actions minutes.
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - '.github/ISSUE_TEMPLATE/**'
+      - 'LICENSE'
+
+permissions:
+  contents: read
+
+# Cancel a previous in-progress run when new commits are pushed to the same
+# PR — avoids paying for checks on commits that are already superseded.
+concurrency:
+  group: ai-usage-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-trailers:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR commits
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify AI-Usage trailers present
+        shell: bash
+        run: |
+          BASE="${{ github.event.pull_request.base.sha }}"
+          HEAD="${{ github.event.pull_request.head.sha }}"
+
+          MISSING=""
+          while IFS= read -r hash; do
+            [ -z "$hash" ] && continue
+            body=$(git log -1 --format="%B" "$hash")
+            if ! echo "$body" | grep -q "^AI-Usage:"; then
+              author=$(git log -1 --format="%ae" "$hash")
+              short=$(git log -1 --format="%h %s" "$hash")
+              MISSING="${MISSING}\n  - ${short}  (${author})"
+            fi
+          done < <(git rev-list --no-merges "${BASE}..${HEAD}")
+
+          if [ -n "$MISSING" ]; then
+            echo "::error::Commits missing the AI-Usage trailer:"
+            printf "${MISSING}\n\n"
+            echo "Every commit must include AI-Usage metadata."
+            echo "Fix: in your local clone run  git config core.hooksPath .githooks"
+            echo "then re-run setup-dev-environment.ps1 and re-commit."
+            echo "Do not bypass the hook with --no-verify."
+            exit 1
+          fi
+
+          echo "All PR commits carry AI-Usage trailers."

@@ -1,0 +1,34 @@
+# .github/dependabot.yml
+# Keeps dependencies patched automatically via PRs.
+# Add or adjust ecosystems to match what the project actually uses.
+
+version: 2
+updates:
+  # GitHub Actions used by this repo's workflows
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # --- Uncomment and adjust the ecosystem(s) the project uses ---
+  #
+  # - package-ecosystem: "npm"
+  #   directory: "/"
+  #   schedule:
+  #     interval: "weekly"
+  #
+  # - package-ecosystem: "pip"
+  #   directory: "/"
+  #   schedule:
+  #     interval: "weekly"
+  #
+  # - package-ecosystem: "composer"     # PHP
+  #   directory: "/"
+  #   schedule:
+  #     interval: "weekly"
+  #
+  # - package-ecosystem: "nuget"        # .NET
+  #   directory: "/"
+  #   schedule:
+  #     interval: "weekly"

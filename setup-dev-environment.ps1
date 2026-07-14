@@ -1,4 +1,4 @@
-﻿# ============================================================================
+# ============================================================================
 # setup-dev-environment.ps1 — one-time per-clone activation for AI tracking
 # ============================================================================
 #
@@ -43,4 +43,3 @@ Write-Host "Setup complete. AI usage tracking is active on this clone." -Foregro
 Write-Host ""
 # Keep the window open when launched by double-click, so the dev sees the result.
 Read-Host "Press Enter to close"
-

@@ -38,4 +38,3 @@ else
   echo "ai-usage hook: pwsh not found — install with 'brew install powershell' to enable AI usage tracking on macOS. (commit allowed)"
   exit 0
 fi
-
