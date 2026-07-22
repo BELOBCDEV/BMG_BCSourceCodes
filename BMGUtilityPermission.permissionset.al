@@ -29,5 +29,10 @@ permissionset 64000 BMGUtilityPermission
         table BMGVendorMasterEntryCount = X,
         report BMGMemberAccountPointsInfo = X,
         report BMGMemberPointEntry = X,
-        page BMGVendorMasterEntryCount = X;
+        page BMGVendorMasterEntryCount = X,
+        tabledata BMGItemLedgEntryExt = RIMD,
+        table BMGItemLedgEntryExt = X,
+        report BMGGeneralJournalBatch = X,
+        codeunit BMGItemLedgEntryExtTabUpdate = X,
+        page BMGCleanupStatement = X;
 }
