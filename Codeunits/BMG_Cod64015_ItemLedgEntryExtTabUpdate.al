@@ -25,14 +25,20 @@ codeunit 64015 BMGItemLedgEntryExtTabUpdate
                 recSalesShipmentHeader.Reset();
                 recSalesShipmentHeader.SetRange("No.", recItemLedgEntry."Document No.");
 
-                if recSalesShipmentHeader.FindFirst() then
+                if recSalesShipmentHeader.FindFirst() then begin
                     recBMGItemLedgEntryExtTab."Order No." := recSalesShipmentHeader."Order No.";
 
-                if recBMGItemLedgEntryExtTab."Order No." <> '' then begin
-                    recSalesInvoiceHeader.Reset();
-                    recSalesInvoiceHeader.SetRange("Order No.", recBMGItemLedgEntryExtTab."Order No.");
-                    if recSalesInvoiceHeader.findfirst() then
-                        recBMGItemLedgEntryExtTab."Payment Terms Code" := recSalesInvoiceHeader."Payment Terms Code";
+                    if recSalesShipmentHeader."Order No." <> '' then begin
+                        recSalesInvoiceHeader.Reset();
+                        recSalesInvoiceHeader.SetRange("Order No.", recSalesShipmentHeader."Order No.");
+                        if recSalesInvoiceHeader.findfirst() then begin
+                            recBMGItemLedgEntryExtTab."Sales Invoice No." := recSalesInvoiceHeader."No.";
+                            recBMGItemLedgEntryExtTab."Payment Terms Code" := recSalesInvoiceHeader."Payment Terms Code";
+                        end else begin
+                            recBMGItemLedgEntryExtTab."Sales Invoice No." := '';
+                            recBMGItemLedgEntryExtTab."Payment Terms Code" := '';
+                        end;
+                    end;
                 end;
                 if recBMGItemLedgEntryExtTab.Insert() then
                     intCtr += 1;
@@ -40,7 +46,7 @@ codeunit 64015 BMGItemLedgEntryExtTabUpdate
             until recItemLedgEntry.Next() = 0;
 
         if GuiAllowed then
-            Message('%1 records has been inserted.');
+            Message('%1 records has been inserted.', intCtr);
     end;
 
 
