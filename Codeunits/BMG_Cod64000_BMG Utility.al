@@ -51,7 +51,63 @@ codeunit 64000 "BMG Utility"
         intRecCtr: Integer;
         recVendor: Record Vendor;
     begin
+        //07292026
+        ValueEntry.Reset();
+        ValueEntry.SetRange("Posting Date", 20261004D);
+
+        if ValueEntry.FindFirst() then
+            repeat
+                ValueEntry."Posting Date" := 20260410D;
+                ValueEntry."Document Date" := 20260410D;
+                ValueEntry."VAT Reporting Date" := 20260410D;
+                ValueEntry."Valuation Date" := 20260410D;
+                ValueEntry."LSC Posting Date" := 20260410D;
+                ValueEntry.Modify();
+                intCtr[1] += 1;
+            until ValueEntry.Next() = 0;
+
+        ValueEntry.Reset();
+        ValueEntry.SetRange("Posting Date", 20270508D);
+
+        if ValueEntry.FindFirst() then
+            repeat
+                ValueEntry."Posting Date" := 20260508D;
+                ValueEntry."Document Date" := 20260508D;
+                ValueEntry."VAT Reporting Date" := 20260508D;
+                ValueEntry."Valuation Date" := 20260508D;
+                ValueEntry."LSC Posting Date" := 20260508D;
+                ValueEntry.Modify();
+                intCtr[2] += 1;
+            until ValueEntry.Next() = 0;
+
+        ItemLedgEntry.Reset();
+        ItemLedgEntry.SetRange("Posting Date", 20261004D);
+
+        if ItemLedgEntry.FindFirst() then
+            repeat
+                ItemLedgEntry."Posting Date" := 20260410D;
+                ItemLedgEntry."Document Date" := 20260410D;
+                ItemLedgEntry."Last Invoice Date" := 20260410D;
+                ItemLedgEntry.Modify();
+                intCtr[3] += 1;
+            until ItemLedgEntry.Next() = 0;
+
+        ItemLedgEntry.Reset();
+        ItemLedgEntry.SetRange("Posting Date", 20270508D);
+
+        if ItemLedgEntry.FindFirst() then
+            repeat
+                ItemLedgEntry."Posting Date" := 20260508D;
+                ItemLedgEntry."Document Date" := 20260508D;
+                ItemLedgEntry."Last Invoice Date" := 20260508D;
+                ItemLedgEntry.Modify();
+                intCtr[4] += 1;
+            until ItemLedgEntry.Next() = 0;
+
+        Message('%1 VEntry Apr updated\%2 Ventry May updated\%3 ILE Apr updated\%4 ILE May updated', intCtr[1], intCtr[2], intCtr[3], intCtr[4]);
+
         //07132026
+        /*
         recApprovalUserSetup.Reset();
         recApprovalUserSetup.SetFilter("User ID", '%1', 'VINCENT.ALCANTARA');
 
@@ -63,6 +119,7 @@ codeunit 64000 "BMG Utility"
             until recApprovalUserSetup.Next() = 0;
 
         Message('%1 record updated successfully!', intRecCtr);
+        */
         /*
         recVendor.Reset();
         recVendor.SetRange("No.", 'NT000163');
