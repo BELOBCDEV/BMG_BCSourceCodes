@@ -16,6 +16,7 @@ codeunit 64013 BMGMemberPointEntryExpDateMgt
                 repeat
                     intRecCtr += 1;
                     recMemberPointEntry."BMG Orig. Expiry Date" := recMemberPointEntry."Expiration Date";
+                    //recMemberPointEntry."BMG New Expiry Date" := CalcDate('CM', recMemberPointEntry."Expiration Date");
                     recMemberPointEntry."Expiration Date" := 0D;
                     recMemberPointEntry.Modify();
                 until recMemberPointEntry.Next() = 0;

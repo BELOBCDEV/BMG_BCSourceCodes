@@ -1,8 +1,9 @@
-pageextension 64038 BMGMemberContactExt extends "LSC Member Contacts"
+pageextension 64038 BMGMemberContactExtX extends "LSC Member Contacts"
 {
     layout
     {
         // Add changes to page layout here
+        /*
         addafter("Mobile Phone No.")
         {
             field("Contact Gender"; Rec."Contact Gender")
@@ -26,6 +27,7 @@ pageextension 64038 BMGMemberContactExt extends "LSC Member Contacts"
                 ApplicationArea = All;
             }
         }
+        */
 
     }
 

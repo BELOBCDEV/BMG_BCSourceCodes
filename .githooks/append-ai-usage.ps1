@@ -355,24 +355,8 @@ if ($totalInteractions -gt 0) {
         Sort-Object Value -Descending |
         ForEach-Object { "$($_.Key)($($_.Value))" }) -join ", "
 
-    # Display to terminal (not into commit message)
-    $host.UI.WriteLine("")
-    $host.UI.WriteLine("  Claude activity detected: $totalInteractions interactions across $sessionCount session(s)")
-    $host.UI.WriteLine("  Auto-categorised: $detectedSummary")
-    if ($sessionSummaries.Count -gt 0) {
-        $host.UI.WriteLine("  Last session: $($sessionSummaries[$sessionSummaries.Count - 1])")
-    }
-    $host.UI.WriteLine("")
-    $host.UI.Write("  Note (optional — press Enter to skip): ")
-
-    try {
-        # Read from console directly — works in Git for Windows terminal
-        $rawInput = [Console]::In.ReadLine()
-        if ($null -eq $rawInput) { $devNote = "" } else { $devNote = $rawInput.Trim() }
-    } catch {
-        $devNote = ""
-    }
-    $host.UI.WriteLine("")
+    # Note prompt skipped — runs silently in VS Code and terminal alike
+    $devNote = ""
 }
 
 # ── Build and append trailers ─────────────────────────────────────────────────

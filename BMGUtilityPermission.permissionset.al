@@ -34,5 +34,7 @@ permissionset 64000 BMGUtilityPermission
         table BMGItemLedgEntryExt = X,
         report BMGGeneralJournalBatch = X,
         codeunit BMGItemLedgEntryExtTabUpdate = X,
-        page BMGCleanupStatement = X;
+        page BMGCleanupStatement = X,
+        codeunit BMGNoPostGenJnl = X,
+        page BMGItemLedger2Ext = X;
 }
