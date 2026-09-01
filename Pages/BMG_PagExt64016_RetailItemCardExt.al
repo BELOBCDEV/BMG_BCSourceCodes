@@ -25,6 +25,19 @@ pageextension 64016 BMGRetailCardExt extends "LSC Retail Item"
                 Caption = 'WHT Prod. Posting Group';
             }
         }
+        addafter("Barcode Mask")
+        {
+            usercontrol(BMGEan13Barcode; BMG_EAN13Barcode)
+            {
+                ApplicationArea = All;
+
+                trigger ControlAddInReady()
+                begin
+                    BMGBarcodeReady := true;
+                    CurrPage.BMGEan13Barcode.UpdateBarcode(ProductExt.DefaultBarcode(Rec));
+                end;
+            }
+        }
     }
 
     actions
@@ -32,6 +45,14 @@ pageextension 64016 BMGRetailCardExt extends "LSC Retail Item"
         // Add changes to page actions here
     }
 
+    trigger OnAfterGetCurrRecord()
+    begin
+        if BMGBarcodeReady then
+            CurrPage.BMGEan13Barcode.UpdateBarcode(ProductExt.DefaultBarcode(Rec));
+    end;
+
     var
         myInt: Integer;
+        ProductExt: Codeunit "LSC Product Ext.";
+        BMGBarcodeReady: Boolean;
 }
