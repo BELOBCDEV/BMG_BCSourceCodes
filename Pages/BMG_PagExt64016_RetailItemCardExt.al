@@ -37,6 +37,17 @@ pageextension 64016 BMGRetailCardExt extends "LSC Retail Item"
                     CurrPage.BMGEan13Barcode.UpdateBarcode(ProductExt.DefaultBarcode(Rec));
                 end;
             }
+            usercontrol(BMGQRCode; BMG_QRCode)
+            {
+                ApplicationArea = All;
+
+                trigger ControlAddInReady()
+                begin
+                    BMGQRCodeReady := true;
+                    CurrPage.BMGQRCode.UpdateQRCode(ProductExt.DefaultBarcode(Rec));
+                end;
+            }
+
         }
     }
 
@@ -49,10 +60,13 @@ pageextension 64016 BMGRetailCardExt extends "LSC Retail Item"
     begin
         if BMGBarcodeReady then
             CurrPage.BMGEan13Barcode.UpdateBarcode(ProductExt.DefaultBarcode(Rec));
+        if BMGQRCodeReady then
+            CurrPage.BMGQRCode.UpdateQRCode(ProductExt.DefaultBarcode(Rec));
     end;
 
     var
         myInt: Integer;
         ProductExt: Codeunit "LSC Product Ext.";
         BMGBarcodeReady: Boolean;
+        BMGQRCodeReady: Boolean;
 }
